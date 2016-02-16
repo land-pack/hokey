@@ -1,3 +1,8 @@
+from tools.nickname import name_as_tuple
+from swi import view_functions
+from swi import main
+
+
 class Hokey:
     def __init__(self, app_name):
         self.name = app_name
@@ -6,13 +11,13 @@ class Hokey:
         #: be function names which are also used to generate URLs and
         #: the values are the function objects themselves.
         #: To register a view function, use the :meth:`route` decorator.
-        self.view_functions = {}
+        # self.view_functions = {}
 
     def request(self, rule):
         pass
 
     def run(self, debug=False):
-        pass
+        main()
 
     def add_url_rule(self, ruler, endpoint=None, view_func=None, **options):
         pass
@@ -42,7 +47,9 @@ class Hokey:
         """
 
         def _route(function_name):
-            self.view_functions[rule] = function_name
+            new_rule = name_as_tuple(rule)
+            # self.view_functions[new_rule] = function_name
+            view_functions[new_rule] = function_name
 
             def __route(function_arg):
                 function_name(function_arg)
@@ -75,11 +82,10 @@ class Hokey:
 app = Hokey(__name__)
 
 
-@app.route('0x0100')
+@app.route('0x8100')
 def hello(a):
     print 'hello a', a
 
 
 if __name__ == '__main__':
-    app.view_functions['0x0100']('ppp')
     app.run()

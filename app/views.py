@@ -1,16 +1,24 @@
-import sys
-
-sys.path.append('..')
 from hokey import Hokey
-from hokey import request
+import datetime
+import time
 
 app = Hokey(__name__)
 
 
-@app.route('0x0100')
+@app.route('0x8100')
 def hello(request):
     print 'hello', request
 
 
+@app.route('0x1010')
+def my_time(request):
+    return str(time.time()) + ' from: ' + request
+
+
+@app.route('0x1020')
+def my_today(request):
+    return str(datetime.datetime.today()) + ' from: ' + request
+
+
 if __name__ == '__main__':
-    app.view_functions['0x0100']('ak....')
+    app.run()

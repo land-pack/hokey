@@ -1,3 +1,2 @@
-def render_template(request):
+def render(val, request):
     pass
-

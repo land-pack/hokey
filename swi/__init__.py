@@ -10,8 +10,13 @@ The association between a URI and the function that handles it is called a route
 import asyncore
 import socket
 from swi.dispatch import Dispatch
+from hokey.configbase import ConfigBase
 
+# Define Global variable here
 view_functions = {}
+main_split = {}
+is_binary_data_receiver = False
+MSG_ID = ConfigBase.MESSAGE_ID
 
 
 class AnswerRequest:
@@ -23,27 +28,16 @@ class AnswerRequest:
         """
         try:
             dispatch_instance = Dispatch(request)
-            uri = dispatch_instance.message_id
-            if uri in view_functions:
+            URL = dispatch_instance.message_id  # Map to the function name
+            if URL in view_functions:
                 # call app view functions here!
-                self.response = view_functions[uri](dispatch_instance.request_dict)
+                new_request = dispatch_instance.request
+                self.response = view_functions[URL](new_request)
             else:
-                print 'No such URI'
+                raise KeyError('No such URI')
         except Exception, e:
             self.response = "Can't resolve the request!"
             print 'Error while doing dispatch!', e
-
-    def checking_device(self):
-        """Called by the __init__ method, if the device id is no register
-            just return False, else return True!
-        """
-        pass
-
-    def checking_command(self):
-        """Called by the __init__ method, if the command is right, just do
-        it! else return to the client 'No such command'
-        """
-        pass
 
 
 class EchoHandler(asyncore.dispatcher_with_send):
@@ -77,5 +71,10 @@ def main():
     asyncore.loop()
 
 
+def sample_foo(val):
+    print 'hello,', val
+
+
 if __name__ == '__main__':
+    view_functions = {'hey': sample_foo}
     main()

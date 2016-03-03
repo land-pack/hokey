@@ -1,13 +1,18 @@
-from hokey import Hokey
+from app import create_app
+from hokey import render
 import datetime
 import time
+from config import DevelopmentConfig
 
-app = Hokey(__name__)
+app = create_app(config_name=DevelopmentConfig)
 
 
 @app.route('0x8100')
 def hello(request):
-    print 'hello', request
+    template = 'get_ter_info|sys_fixed_msg_attr2|client_dev_id|sys_product|'
+    print 'terminal_request', request
+    # TODO ORM here
+    return render(request, template)
 
 
 @app.route('0x1010')

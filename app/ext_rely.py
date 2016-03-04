@@ -1,7 +1,7 @@
-from hokey import rely_base
+from hokey import SplitBase
 
 
-@rely_base.register_rely_func('is_okay')
+@SplitBase.register_rely_func('is_okay')
 def is_true_fun(val):
     """
 
@@ -12,4 +12,4 @@ def is_true_fun(val):
 
 
 if __name__ == '__main__':
-    print rely_base.rely_on_functions
+    print SplitBase.rely_on_functions

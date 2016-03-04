@@ -18,6 +18,8 @@ class Hokey:
     def __init__(self, config_name=ConfigBase, is_binary_data_recv=True):
         self.data = ''
         self.response = ''
+        self.client_request = ''
+        self.client_response = ''
         self.device_id = ''  # For map the device_id to the socket ...
         # ------------------------------------------------------------------#
         self.config_instance = config_name()  # Config instance or Config Subclass
@@ -88,15 +90,19 @@ class Hokey:
 
     def process_request(self, client_request):
         self.data = client_request  # Get the data from ...grasshopper..
-        tuple_data = tongue.Decode(self.data).dst  # (126, 1, 2, 0, 2, 1, 80, 51, 80, 68, 118, 0, 3, 51, 52, 5, 126)
-        request_context = MainSplit(tuple_data)
-        request_dict = request_context.result
-        message_id = request_dict[self.message_id_key]  # The message_id_key from client config instance!
-        self.device_id = request_dict[self.device_id_key]  # The device_id_key also from client config class instance!
-        if message_id in self.views_functions:
-            self.response = self.views_functions[message_id](request_dict)
+        if self.is_client_data():
+            pass
         else:
-            self.response = "Can not process your data"
+            tuple_data = tongue.Decode(self.data).dst  # (126, 1, 2, 0, 2, 1, 80, 51, 80, 68, 118, 0, 3, 51, 52, 5, 126)
+            request_context = MainSplit(tuple_data)
+            request_dict = request_context.result
+            message_id = request_dict[self.message_id_key]  # The message_id_key from client config instance!
+            self.device_id = request_dict[
+                self.device_id_key]  # The device_id_key also from client config class instance!
+            if message_id in self.views_functions:
+                self.response = self.views_functions[message_id](request_dict)
+            else:
+                self.response = "Can not process your data"
         return self.response
 
     def set_key(self):
@@ -104,9 +110,24 @@ class Hokey:
         By resolution the data,and get the device_id out.
         will return the device_id as the socket_map key!!
         """
-        return self.device_id  # 15754710000
+        return self.device_id  # {'15754710000':socket_fd}
+
+    def is_client_data(self):
+        """
+        There are should have a protocols for client!
+        :return:
+        """
+        if 'client' in self.data:  # Client control protocol...
+            return True
+        else:
+            return False
 
     def make_response(self, rv):
+        """
+        Make a response for the client ,if the user want to know his/her device work status!
+        :param rv:
+        :return:
+        """
         pass
 
     def required_split(self, NewClass):

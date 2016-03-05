@@ -1,11 +1,12 @@
-# Default configuration
-from .configbase import ConfigBase
+from configbase import ConfigBase
 import tongue
 from convert import SplitConvertBase
+from tools import name_as_tuple
+import json
 
 
 class MainSplit(SplitConvertBase):
-    sub_split_rule = []  # TODO FIxed ...
+    sub_split_rule = []
 
 
 class Hokey:
@@ -18,6 +19,8 @@ class Hokey:
     def __init__(self, config_name=ConfigBase, is_binary_data_recv=True):
         self.data = ''
         self.response = ''
+        self.terminal_request_dict = {}
+        self.client_request_dict = {}
         self.client_request = ''
         self.client_response = ''
         self.device_id = ''  # For map the device_id to the socket ...
@@ -80,29 +83,38 @@ class Hokey:
 
         return _route
 
-    def dispatch_request(self):
+    def dispatch_terminal_request(self):
         """Does the request dispatching. Matches the URL and returns the
         value of the view or error handler. This does not have to be a
         response object. In order to convert the return value to a proper
         response object, call:func:`make_response`
         """
-        pass
+        message_id = self.terminal_request_dict[self.message_id_key]  # The message_id_key from client config instance!
+        self.device_id = self.terminal_request_dict[
+            self.device_id_key]  # The device_id_key also from client config class instance!
+        if message_id in self.views_functions:
+            self.response = self.views_functions[message_id](self.terminal_request_dict)
+        else:
+            self.response = "Can not process your data"
+
+    def dispatch_client_request(self):
+        """
+        Input a dict as it's param, according the Dict-Key and do next step!
+        :return:
+        """
+        message_id = self.client_request_dict['command']
+        device_id = self.client_request_dict['device']
 
     def process_request(self, client_request):
         self.data = client_request  # Get the data from ...grasshopper..
-        if self.is_client_data():
-            pass
-        else:
+        if self.is_client_data():  # If the message from client ...
+            self.client_request_dict = json.load(self.data)
+            self.dispatch_client_request()
+        else:  # If the message from terminal ...
             tuple_data = tongue.Decode(self.data).dst  # (126, 1, 2, 0, 2, 1, 80, 51, 80, 68, 118, 0, 3, 51, 52, 5, 126)
             request_context = MainSplit(tuple_data)
-            request_dict = request_context.result
-            message_id = request_dict[self.message_id_key]  # The message_id_key from client config instance!
-            self.device_id = request_dict[
-                self.device_id_key]  # The device_id_key also from client config class instance!
-            if message_id in self.views_functions:
-                self.response = self.views_functions[message_id](request_dict)
-            else:
-                self.response = "Can not process your data"
+            self.terminal_request_dict = request_context.result
+            self.dispatch_terminal_request()
         return self.response
 
     def set_key(self):
@@ -136,7 +148,7 @@ class Hokey:
         :param NewClass:
         :return:
         """
-        self.main_split['/'] = NewClass
+        self.example['/'] = NewClass
 
         class B:
             pass
@@ -148,15 +160,3 @@ class Hokey:
 
     def request_context(self, environ):
         pass
-
-
-app = Hokey(__name__)
-
-
-@app.route('0x8100')
-def hello(a):
-    print 'hello a', a
-
-
-if __name__ == '__main__':
-    app.run()

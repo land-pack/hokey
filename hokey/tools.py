@@ -2,6 +2,25 @@
 Working for make sure we got complete data!
 By checking CRC we can make sure!
 """
+import struct
+import binascii
+
+
+def name_as_tuple(val):
+    """
+    To make hexlify being a decimal
+    :param val: '0x8100' or '8100'
+    :return: '(128,1)'
+    """
+    if isinstance(val, str):
+        val = val.replace('0x', '')
+        val = binascii.unhexlify(val)
+        data_length = len(val)
+        s = struct.Struct('%iB' % data_length)
+        temp = s.unpack(val)
+        return str(temp)
+    else:
+        raise TypeError("Except a String input!")
 
 
 def check(a_tuple):
@@ -47,7 +66,8 @@ def is_complete(val, std):
     """
     if the client crc equal the calculate value
     and then return True else return False!
-    :param val:
+    :param val: A list data, which you should calculate the crc !
+    :param std: The crc code from client given!
     :return:
     """
     result = check(val)

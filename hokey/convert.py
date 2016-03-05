@@ -1,4 +1,5 @@
-from _specification import split_ruler
+from _re_pattern import split_ruler
+from tools import is_complete
 
 
 class ConvertBase:
@@ -82,7 +83,7 @@ class SplitConvertBase(SplitBase, ConvertBase):
         for index in range(split_list_length):
             spd = split_ruler(self.split_list[index])
             fill_field = self.prefix + spd['field']
-
+            whether_convert = False
             if 'convert_fun' in spd:
                 whether_convert = True
                 convert_fun_name = spd['convert_fun']  # Will get the name of convert function. Example: `to_word`

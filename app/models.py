@@ -28,13 +28,14 @@ except ImportError, msg:
     info_msg = "Run 'pip install sqlalchemy' to fixed this!"
     info(info_msg)
 
+
 class TerminalTable(Base):
     """
     For save terminal information,if you install the terminal on your car
     there are should be have something like 'car color,car type ,stuff ,etc'
     """
     __tablename__ = 'terminal_info'
-    id = Column(Integer,primary_key=True)
+    id = Column(Integer, primary_key=True)
     dev_id = Column(String(16))
     dev_color = Column(String(16))
 
@@ -46,9 +47,8 @@ class AuthTable(Base):
     __tablename__ = 'auth_info'
 
     id = Column(Integer, primary_key=True)
-    #dev_id = ForeignKey()
+    # dev_id = ForeignKey()
     auth_code = Column(Integer)
-
 
 
 class PositionTable(Base):

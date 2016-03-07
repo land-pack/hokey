@@ -1,3 +1,6 @@
+import os
+from hokey.configbase import ConfigBase
+
 """
 The NUM_CODE is length of authentication
 """
@@ -13,15 +16,11 @@ DB_PASSWORD = 'tianxunceshi'
 DB_PORT = 3306
 DB_NAME = 'sqlalchemy_demo'
 
+
 # The basic configuration class holds common settings, overloaded
 # in subclasses as necessary.
 
-import os
-from hokey.configbase import ConfigBase
-
-
 class DevelopmentConfig(ConfigBase):
-
     MAIN_SPLIT = ['head_tag/1', 'message_id/2', 'msg_attr/2',
                   'device_id/6', 'msg_product/2',
                   'package_item/is_subpackage(msg_attr)?13~15:13~13',

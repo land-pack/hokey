@@ -18,6 +18,7 @@ class Hokey:
 
     def __init__(self, config_name=ConfigBase, is_binary_data_recv=True):
         self.data = ''
+        self.set_socket_map = {}
         self.response = ''
         self.terminal_request_dict = {}
         self.client_request_dict = {}
@@ -124,6 +125,9 @@ class Hokey:
         """
         return self.device_id  # {'15754710000':socket_fd}
 
+    def set_socket_map(self, val):
+        self.set_socket_map = val
+
     def is_client_data(self):
         """
         There are should have a protocols for client!
@@ -140,7 +144,6 @@ class Hokey:
         :param rv:
         :return:
         """
-        pass
 
     def required_split(self, NewClass):
         """

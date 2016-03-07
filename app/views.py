@@ -14,7 +14,7 @@ from splits import PositionSplit
 app = create_app(config_name=DevelopmentConfig)
 
 
-@app.route('0x0100')
+@app.route('0x0100', '0x8100')
 def register(terminal_request):
     """
     :param terminal_request: original data format to Dicts from terminal!
@@ -28,7 +28,7 @@ def register(terminal_request):
 @app.route('0x0102')
 def auth(terminal_request):
     msg_content = 'client_msg_product|client_msg_id|sys_ok'
-    template = 'ser_com_rsp|sys_fixed_msg_attr|client_dev_id|sys_product|' + msg_content
+    template = '0x8001|sys_fixed_msg_attr|client_dev_id|sys_product|' + msg_content
     print 'terminal_request', terminal_request
     return render(terminal_request, template)
 

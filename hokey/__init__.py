@@ -1,4 +1,4 @@
-from convert import ConvertBase, SplitBase
+from convert import ConvertBase, SplitBase, SplitConvertBase
 from tools import is_subpackage, is_encryption, is_complete
 from template import render
 
@@ -7,7 +7,7 @@ from template import render
 
 
 # Default convert function define below
-
+@ConvertBase.register_convert_func('to_bcd')
 def to_bcd(val):
     temp_hex = []
     for item in val:
@@ -77,7 +77,12 @@ def is_encryption_fun(val):
 if __name__ == '__main__':
     # Test convert_base instance
     # print 'Convert.convert_function', ConvertBase.convert_functions
-    # sample = [1, 80, 51, 80, 68, 118]
-    sample = [1, 86, 01, 75, 25, 04]
-    result = to_bcd(sample)
-    print result
+    class SampleSplitConvertBase(SplitConvertBase):
+        crc_check = True
+        sub_split_rule = ['message_id/2', 'message_attr/2 | to_int', 'device/6 | to_bcd',
+                          'product/2', 'content/2 | to_int']
+
+
+    sample = (126, 1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 51, 52, 5, 126)
+    result = SampleSplitConvertBase(sample)
+    print result.result

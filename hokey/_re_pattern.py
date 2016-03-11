@@ -12,15 +12,16 @@ def build_dict(val):
     :param val: It's a string with some ruler Example: 'foo/is_true(bar)1~2?1~4'
     :return: {'field':'foo','fun':'is_true','arg':'bar','optA':'1~2','optB':'1~4'}
     """
+    temp_dict = {}
     if not isinstance(val, str):
         raise ValueError("""Expect a string as param\nExample:'foo/is_true(bar)?1~3:1~5 | to_dword'""")
 
     val = val.replace(' ', '')
     if '|' in val:
         pattern = re.compile(r'(?P<rest>.*)\|(?P<convert_fun>.*)')
-    n = pattern.match(val)
-    temp_dict = n.groupdict()  # Only for get the convert_function name
-    val = temp_dict['rest']
+        n = pattern.match(val)
+        temp_dict = n.groupdict()  # Only for get the convert_function name
+        val = temp_dict['rest']
     if '?' in val:  # If you split_list have something like this Example# 'tie/is_okay(dev_id)?1~2:2~4'
         pattern = re.compile(r'(?P<field>.*)/(?P<fun>.*)\((?P<arg>.*)\)\?(?P<optA>.*):(?P<optB>.*)')
     else:
@@ -37,7 +38,8 @@ def build_dict(val):
 
     m = pattern.match(val)
     result = m.groupdict()
-    result['convert_fun'] = temp_dict['convert_fun']
+    if 'convert_fun' in temp_dict:
+        result['convert_fun'] = temp_dict['convert_fun']
     return result
 
 

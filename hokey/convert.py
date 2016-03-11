@@ -45,6 +45,8 @@ class SplitBase:
 
 
 class SplitConvertBase(SplitBase, ConvertBase):
+    crc_check = False
+
     def __init__(self, val):
         self.convert_fun = None
         self.dependent_fun = None
@@ -62,11 +64,11 @@ class SplitConvertBase(SplitBase, ConvertBase):
                 self.message_head_content = val[1:-1]
                 self.crc = val[-2]
                 if is_complete(self.message_head_content, self.crc):  # TODO Fixed
-                    self.build_dict(val)
+                    self.build_dict(self.message_head_content)
                 else:
                     # ignore this request from terminal device
                     self.debug = False
-                    ValueError('No complete data from client!')
+                    print ('No complete data from client!')
             else:
                 self.build_dict(val)
         else:
@@ -78,11 +80,12 @@ class SplitConvertBase(SplitBase, ConvertBase):
         :return: None
         """
         base_index = 0
-        split_list_length = len(self.split_list)
+        split_list_length = len(self.sub_split_rule)
 
         for index in range(split_list_length):
-            spd = split_ruler(self.split_list[index])
-            fill_field = self.prefix + spd['field']
+            spd = split_ruler(self.sub_split_rule[index])
+            # fill_field = self.prefix + spd['field']
+            fill_field = spd['field']
             whether_convert = False
             if 'convert_fun' in spd:
                 whether_convert = True

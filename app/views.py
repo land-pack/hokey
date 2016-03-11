@@ -59,6 +59,9 @@ def get_ter_info(terminal_request):
 def get_ter_attr(terminal_request):
     msg_content = ''  # Empty message content for checking terminal attribute
     template = 'get_ter_attr|sys_fixed_msg_attr2|client_dev_id|sys_product|'
+    if 'GET' in terminal_request:
+        # return SplitInstance.result ...
+        pass
     return render(terminal_request, template)
 
 

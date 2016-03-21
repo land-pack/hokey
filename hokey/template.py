@@ -1,5 +1,13 @@
 import tongue
-from tools import check
+from _tools import check
+
+counter = 0
+
+
+def new_counter():
+    global counter
+    counter += 1
+    return counter
 
 
 def render(request, ruler):

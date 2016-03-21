@@ -2,6 +2,7 @@ import tongue
 from convert import SplitConvertBase
 from _tools import name_as_tuple
 import json
+from ._config import Config
 
 
 class MainSplit(SplitConvertBase):
@@ -14,15 +15,16 @@ class Base:
     latest_terminal_request = {}  # Store the latest terminal request for client use!
     current_client_requests = {}  # {"123":{"client":"GET","device":"123","cmd":"0x8100"},{"456":{"client":"SET"..}}
     done_client_request = {}
+    config = Config()
 
     def __init__(self):
         self.data = ''
         self.response = ''  # Global variable for Communicate to each function!
-        self.config_instance = config()  # Config instance or Config Subclass
-        self.prefix = self.config_instance.PREFIX
-        self.message_id_key = self.config_instance.MESSAGE_ID
-        self.device_id_key = self.config_instance.DEVICE_ID
-        MainSplit.sub_split_rule = self.config_instance.MAIN_SPLIT
+
+        self.prefix = self.config.get('PREFIX')
+        self.message_id_key = self.config.get('MESSAGE_ID')
+        self.device_id_key = self.config.get('DEVICE_ID')
+        MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
         # -----------------------------
         self.terminal_request_dict = {}
         self.client_request_dict = {}
@@ -67,7 +69,7 @@ class Hokey(Base):
     also work for checking receive data ...
     """
 
-    def __init__(self, config_name=ConfigBase, is_binary_data_recv=True):
+    def __init__(self, is_binary_data_recv=True):
         self.set_socket_map = {}
         self.response = ''
 
@@ -194,31 +196,3 @@ class Hokey(Base):
             return True
         else:
             return False
-
-    def make_response(self, rv):
-        """
-        Make a response for the client ,if the user want to know his/her device work status!
-        :param rv:
-        :return:
-        """
-        if isinstance(self.response, dict):
-            pass
-
-    def required_split(self, NewClass):
-        """
-        For register a main split class ,
-        :param NewClass:
-        :return:
-        """
-        self.example['/'] = NewClass
-
-        class B:
-            pass
-
-        return B
-
-    def process_response(self, response):
-        pass
-
-    def request_context(self, environ):
-        pass

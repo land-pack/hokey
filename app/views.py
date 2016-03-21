@@ -1,17 +1,14 @@
 from app import create_app
 from hokey import render
-from settings import DevelopmentConfig
-
 from models import PositionTable
 from app.models import session
 from app.models import Base, engine
+from splits import PositionSplit
 
 Base.metadata.create_all(engine)
 
-from splits import PositionSplit
-
 # from grasshopper import GrasshopperEngine as GE
-app = create_app(config_name=DevelopmentConfig)
+app = create_app()
 
 
 @app.route('0x0100', '0x8100')
@@ -63,15 +60,3 @@ def get_ter_attr(terminal_request):
         # return SplitInstance.result ...
         pass
     return render(terminal_request, template)
-
-
-def main():
-    # engine = GE(host='0.0.0.0',port=5555)
-    # engine.install(app)
-    # engine.run()
-    pass
-
-
-if __name__ == '__main__':
-    # main()
-    pass

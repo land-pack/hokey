@@ -1,5 +1,5 @@
 from _re_pattern import split_ruler
-from tools import is_complete
+from _tools import is_complete
 
 
 class ConvertBase:
@@ -131,14 +131,3 @@ class SplitConvertBase(SplitBase, ConvertBase):
                 field_value_custom_type = field_value
             self.result[fill_field] = field_value_custom_type
 
-
-# -----------------------Testing----------------------
-class SampleSplitConvertBase(SplitConvertBase):
-    sub_split_rule = ['bar/1 | to_word', 'foo/is_true(bar)?1~3:1~5 | to_dword', 'sap/#bar | to_double',
-                      'time/1 | to_time']
-
-
-if __name__ == '__main__':
-    # sample_input = (3, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19)
-    # sample_instance_2 = ConvertBase()
-    print ConvertBase.convert_functions

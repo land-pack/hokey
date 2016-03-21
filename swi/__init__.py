@@ -10,7 +10,7 @@ The association between a URI and the function that handles it is called a route
 import asyncore
 import socket
 from swi.dispatch import Dispatch
-from hokey.configbase import ConfigBase
+from hokey._config import ConfigBase
 
 # Define Global variable here
 view_functions = {}

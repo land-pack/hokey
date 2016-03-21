@@ -1,225 +1,87 @@
-from configbase import ConfigBase
-import tongue
-from convert import SplitConvertBase
-from tools import name_as_tuple
-import json
+from convert import ConvertBase, SplitBase, SplitConvertBase
+from _tools import is_subpackage, is_encryption, is_complete
+
+# from core import Hokey
 
 
-class MainSplit(SplitConvertBase):
-    crc_check = True
-    sub_split_rule = []
+# Default convert function define below
+@ConvertBase.register_convert_func('to_bcd')
+def to_bcd(val):
+    temp_hex = []
+    for item in val:
+        temp_hex.append(hex(item))
+    temp_str = ''
+    for item in temp_hex:
+        temp_str += str(item).replace('0x', '')
+    return temp_str
 
 
-class Base:
-    view_functions = {}
-    latest_terminal_request = {}  # Store the latest terminal request for client use!
-    current_client_requests = {}  # {"123":{"client":"GET","device":"123","cmd":"0x8100"},{"456":{"client":"SET"..}}
-    done_client_request = {}
-
-    def __init__(self, config=ConfigBase):
-        self.data = ''
-        self.response = ''  # Global variable for Communicate to each function!
-        self.config_instance = config()  # Config instance or Config Subclass
-        self.prefix = self.config_instance.PREFIX
-        self.message_id_key = self.config_instance.MESSAGE_ID
-        self.device_id_key = self.config_instance.DEVICE_ID
-        MainSplit.sub_split_rule = self.config_instance.MAIN_SPLIT
-        # -----------------------------
-        self.terminal_request_dict = {}
-        self.client_request_dict = {}
-
-    def loading(self, data):
-        """
-        :param data: from grasshopper
-        :return: to the grasshopper
-        """
-        self.data = data
-        self.pre_process()
-        return self.response
-
-    def pre_process(self):
-        if 'client' in self.data:
-            self.client_request_dict = json.loads(self.data)  # Fixed ...json.load --> json.loads
-            self.dispatch_client_request()
-        else:
-            tuple_data = tongue.Decode(self.data).dst  # (126, 1, 2, 0, 2, 1, 80, 51, 80, 68, 118, 0, 3, 51, 52, 5, 126)
-            request_context = MainSplit(tuple_data)
-            self.terminal_request_dict = request_context.result
-            self.dispatch_terminal_request()
-
-    def dispatch_client_request(self):
-        pass
-
-    def dispatch_terminal_request(self):
-        pass
-
-    def process_request(self):
-        if 'client' in self.response:
-            #: sender to the client ....
-            pass
-        else:
-            #: send to the terminal
-            pass
-
-
-class Hokey(Base):
+def to_dword(val):
     """
-    This class work for map the message id to the view functions
-    also work for checking receive data ...
+    :param val: a tuple (2, 110, 226, 147)
+    :return:40821395 but what we need is range(38.0000 ~ 42.00000)
     """
+    temp_hex = []
+    for item in val:
+        temp_hex.append(hex(item))
+    temp_str = ''
+    for item in temp_hex:
+        temp_str += str(item).replace('0x', '')
+    result = int(temp_str, 16)
+    return result
 
-    def __init__(self, config_name=ConfigBase, is_binary_data_recv=True):
-        self.set_socket_map = {}
-        self.response = ''
 
-        self.client_request = ''
-        self.client_response = ''
-        self.device_id = ''  # For map the device_id to the socket ...
-        # ------------------------------------------------------------ ------#
+@ConvertBase.register_convert_func('to_dword')
+def to_double_word_fun(val):
+    """
+    :param val: a tuple (2, 110, 226, 147)
+    :return: (38.0000 ~ 42.00000)
+    """
+    a_value = to_dword(val)
+    temp = float(a_value)
+    ret = temp / 1000000
+    return ret
 
-        # -------------------------------------------------------------------#
-        # override the sub_split_list
-        #: A dictionary of all view functions register. The keys will
-        #: be function names which are also used to generate URLs and
-        #: the values are the function objects themselves.
-        #: To register a view function, use the :meth:`route` decorator.
 
-        is_binary_data = is_binary_data_recv
-        # If you set is_binary_data being False
-        # You will deal with normally string data, no binary data
-        # It's mean you will no call tongue to Decode/Code data any more
+@ConvertBase.register_convert_func('to_int')
+def to_int_dword_fun(val):
+    a_value = to_dword(val)
+    temp = int(a_value)
+    return temp
 
-    def request(self, rule):
-        pass
 
-    def route(self, rule):
-        """
-        A decorator that is used to register a view function for a given
-        URL rule. This does the same thing as :meth:`add_url_rule` but
-        is intended for decorator usage::
+@ConvertBase.register_convert_func('to_word')
+def to_a_word_fun(val):
+    """
+    :param val: a tuple with two element (2, 110)
+    :return:
+    """
+    a_value = to_dword(val)
+    temp = float(a_value)
+    return temp
 
-            @app.route('0x0100')
-            def index():
-                pass
 
-        Is equivalent to the following::
+# --------------------------------------------------
+@SplitBase.register_rely_func('is_sub')
+def is_subpackage_fun(val):
+    return is_subpackage(val)
 
-            def index():
-                pass
-            app.add_url_rule('0x0100','index',index)
 
-        If the view_func is not provided you will need to connect the
-        endpoint to a view function like so::
+@SplitBase.register_rely_func('is_encryption')
+def is_encryption_fun(val):
+    return is_encryption(val)
 
-            app.view_functions['index'] = index
 
-        :param	rule: the URL rule as string
-        """
+if __name__ == '__main__':
+    # Test convert_base instance
+    # print 'Convert.convert_function', ConvertBase.convert_functions
+    class SampleSplitConvertBase(SplitConvertBase):
+        crc_check = False
+        sub_split_rule = ['message_id/2', 'message_attr/2 | to_int', 'device/6 | to_bcd',
+                          'product/2 | to_int', 'content/4 | to_dword']
 
-        def _route(function_name):
-            # TODO
-            new_rule = name_as_tuple(rule)  # TODO fiexed ...
-            # To make '0x8100' to '(129, 1)'
-            # self.view_functions[new_rule] = function_name
-            self.view_functions[new_rule] = function_name
 
-            def __route(function_arg):
-                function_name(function_arg)
-
-            return __route
-
-        return _route
-
-    def dispatch_terminal_request(self):
-        """Does the request dispatching. Matches the URL and returns the
-        value of the view or error handler. This does not have to be a
-        response object. In order to convert the return value to a proper
-        response object, call:func:`make_response`
-        """
-
-        message_id = self.terminal_request_dict[self.message_id_key]  # The message_id_key from client config instance!
-        self.device_id = self.terminal_request_dict[self.device_id_key]  # The device_id_key also from client config
-        self.latest_terminal_request[self.device_id] = self.terminal_request_dict  # update the dict for latest
-        # self.device_id Example:'665','666'
-
-        if self.device_id in self.done_client_request:
-            self.client_response[self.device_id] = self.terminal_request_dict
-            del self.current_client_requests[self.device_id]
-            del self.done_client_request[self.device_id]
-        else:
-            if self.device_id in self.current_client_requests:
-                # This request should response to the client no the terminal!
-                if message_id in self.view_functions:
-                    command = self.view_functions[self.device_id]['command']  # command == message_id
-                    self.client_response = self.view_functions[command](self.terminal_request_dict)
-                    # Redirect ....to a new view functions ...by 'command'
-                    self.done_client_request[self.device_id] = 'done'
-                    del self.current_client_requests[self.device_id]  # Okay the current client request have process!
-                else:
-                    self.client_response = "Can't not process your data"
-            else:
-                if message_id in self.views_functions:
-                    self.response = self.views_functions[message_id](self.terminal_request_dict)
-                else:
-                    self.response = "Can not process your data"
-
-    def dispatch_client_request(self):
-        """
-        Input a dict as it's param, according th
-        e Dict-Key and do next step!
-        :return:
-        """
-        message_id = self.client_request_dict['command']
-        device_id = self.client_request_dict['device']
-
-        self.current_client_requests[device_id] = message_id  # current device should return something to client!
-
-    def set_key(self):
-        """
-        By resolution the data,and get the device_id out.
-        will return the device_id as the socket_map key!!
-        """
-        if self.is_client_data():
-            return "xxx"
-        return self.device_id  # {'15754710000':socket_fd}
-
-    def set_socket_map(self, val):
-        self.set_socket_map = val
-
-    def is_client_data(self):
-        """
-        There are should have a protocols for client!
-        :return:
-        """
-        if 'client' in self.data:  # Client control protocol...
-            return True
-        else:
-            return False
-
-    def make_response(self, rv):
-        """
-        Make a response for the client ,if the user want to know his/her device work status!
-        :param rv:
-        :return:
-        """
-        if isinstance(self.response, dict):
-            pass
-
-    def required_split(self, NewClass):
-        """
-        For register a main split class ,
-        :param NewClass:
-        :return:
-        """
-        self.example['/'] = NewClass
-
-        class B:
-            pass
-
-        return B
-
-    def process_response(self, response):
-        pass
-
-    def request_context(self, environ):
-        pass
+    # sample = (126, 1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 51, 52, 5, 126)
+    sample = (1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 2, 110, 226, 147, 5)
+    result = SampleSplitConvertBase(sample)
+    print result.result

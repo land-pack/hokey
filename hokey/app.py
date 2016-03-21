@@ -11,7 +11,13 @@ class MainSplit(SplitConvertBase):
 
 
 class Base:
+
+    #: A dictionary of all view functions registered.  The keys will
+    #: be function names which are also used to generate MESSAGE_IDs and
+    #: the values are the function objects themselves.
+    #: To register a view function, use the :meth:`route` decorator.
     view_functions = {}
+
     latest_terminal_request = {}  # Store the latest terminal request for client use!
     current_client_requests = {}  # {"123":{"client":"GET","device":"123","cmd":"0x8100"},{"456":{"client":"SET"..}}
     done_client_request = {}
@@ -29,7 +35,7 @@ class Base:
         self.terminal_request_dict = {}
         self.client_request_dict = {}
 
-    def loading(self, data):
+    def input(self, data):
         """
         :param data: from grasshopper
         :return: to the grasshopper

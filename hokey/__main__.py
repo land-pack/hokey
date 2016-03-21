@@ -2,6 +2,7 @@ from .convert import SplitConvertBase
 from ._config import Config
 import json
 
+
 class MainSplit(SplitConvertBase):
     crc_check = True
     sub_split_rule = []
@@ -13,7 +14,7 @@ class Base:
     current_client_requests = {}  # {"123":{"client":"GET","device":"123","cmd":"0x8100"},{"456":{"client":"SET"..}}
     done_client_request = {}
 
-    config = Config()   # A super Dicts, It's have a from_object method inside!
+    config = Config()  # A super Dicts, It's have a from_object method inside!
 
     def __init__(self):
         self.data = ''
@@ -202,8 +203,6 @@ class Hokey(Base):
         """
         if isinstance(self.response, dict):
             pass
-
-
 
     def process_response(self, response):
         pass

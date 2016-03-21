@@ -1,4 +1,4 @@
-from hokey.convert import SplitConvertBase
+from hokey import SplitConvertBase
 
 
 class SampleSplitConvertBase(SplitConvertBase):

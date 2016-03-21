@@ -1,7 +1,5 @@
 from convert import ConvertBase, SplitBase, SplitConvertBase
-from _tools import is_subpackage, is_encryption, is_complete
-
-# from core import Hokey
+from _tools import is_subpackage, is_encryption
 
 
 # Default convert function define below
@@ -81,7 +79,6 @@ if __name__ == '__main__':
                           'product/2 | to_int', 'content/4 | to_dword']
 
 
-    # sample = (126, 1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 51, 52, 5, 126)
     sample = (1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 2, 110, 226, 147, 5)
     result = SampleSplitConvertBase(sample)
     print result.result

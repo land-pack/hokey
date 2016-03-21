@@ -4,4 +4,3 @@ from .convert import SplitBase, ConvertBase, SplitConvertBase
 
 # For run the core inside script, just simple import it!
 import core
-

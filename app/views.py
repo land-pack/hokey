@@ -1,25 +1,25 @@
 from app import create_app
 from hokey import render
-from models import PositionTable
-from app.models import session
-from app.models import Base, engine
-from splits import PositionSplit
-
-Base.metadata.create_all(engine)
-
-# from grasshopper import GrasshopperEngine as GE
+# from models import PositionTable
+# from app.models import session
+# from app.models import Base, engine
+# from splits import PositionSplit
+#
+# Base.metadata.create_all(engine)
+#
+# # from grasshopper import GrasshopperEngine as GE
 app = create_app()
 
 
-@app.route('0x0100', '0x8100')
-def register(terminal_request):
-    """
-    :param terminal_request: original data format to Dicts from terminal!
-    :return: a render which a tuple factory
-    you should know what you are doing and which field you need!
-    """
-    template = 'client_msg_id|client_msg_attr|client_dev_id|client_msg_product|client_content'
-    return render(terminal_request, template)
+# @app.route('0x0100', '0x8100')
+# def register(terminal_request):
+#     """
+#     :param terminal_request: original data format to Dicts from terminal!
+#     :return: a render which a tuple factory
+#     you should know what you are doing and which field you need!
+#     """
+#     template = 'client_msg_id|client_msg_attr|client_dev_id|client_msg_product|client_content'
+#     return render(terminal_request, template)
 
 
 @app.route('0x0102')
@@ -30,20 +30,20 @@ def auth(terminal_request):
     return render(terminal_request, template)
 
 
-@app.route('0x0200')
-def position(terminal_request):
-    # Load the field which your need to save!
-    content = terminal_request['client_content']
-    # Do some Resolution according your need!
-    position_instance = PositionSplit(content)
-    # Get the attribute of the PositionSplit and you'll got a Dict type
-    position_info = position_instance.result
-    print 'position_info', position_info
-    # ORM
-    p_i = PositionTable(**position_info)
-    session.add(p_i)
-    session.commit()
-
+# @app.route('0x0200')
+# def position(terminal_request):
+#     # Load the field which your need to save!
+#     content = terminal_request['client_content']
+#     # Do some Resolution according your need!
+#     position_instance = PositionSplit(content)
+#     # Get the attribute of the PositionSplit and you'll got a Dict type
+#     position_info = position_instance.result
+#     print 'position_info', position_info
+#     # ORM
+#     p_i = PositionTable(**position_info)
+#     session.add(p_i)
+#     session.commit()
+#
 
 @app.route('0x0104')
 def get_ter_info(terminal_request):
@@ -60,3 +60,6 @@ def get_ter_attr(terminal_request):
         # return SplitInstance.result ...
         pass
     return render(terminal_request, template)
+
+if __name__ == '__main__':
+    print app.view_functions

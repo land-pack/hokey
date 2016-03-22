@@ -7,9 +7,16 @@ class SampleSplitConvertBase(SplitConvertBase):
     Output: a dict with the name you give `sub_split_rule`
             the type will convert to your asking,Example `to_double`
     """
-    crc_check = True
+    crc_check = False
     sub_split_rule = ['message_id/2', 'message_attr/2 | to_int', 'device/6 | to_bcd',
-                          'product/2 | to_int', 'content/2 | to_int']
+                      'product/2 | to_int', 'content/2']
+
+    sub_split_rule = ['head_tag/1', 'message_id/2', 'msg_attr/2',
+                      'device_id/6 | to_bcd', 'msg_product/2',
+                      'package_item/is_sub(msg_attr)?13~15:13~13',
+                      'content/is_sub(msg_attr)?15~-2:13~-2',
+                      'crc/-2~-1'
+                      ]
 
 
 class PositionSplit(SplitConvertBase):

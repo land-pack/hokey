@@ -32,12 +32,14 @@ class Config(dict):
                 self[key] = getattr(obj, key)
 
 
-class Hokey:
+class SampleForTestConfigDict:
     config = Config()  # A extends Dict!
 
 
 if __name__ == '__main__':
-    p = Hokey()
-    p.config.from_object(ConfigSample)  # This config method can be easy load!
-    p.config['ak'] = 'kkkk'  # There also another config method
+    p = SampleForTestConfigDict()
+    #: This config method can be easy load!
+    p.config.from_object(ConfigSample)
+    #: There also another config method
+    p.config['ak'] = 'kkkk'
     print p.config

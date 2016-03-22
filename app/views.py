@@ -1,5 +1,5 @@
 from app import create_app
-from hokey import render
+from hokey import render, redirect, url_for
 # from models import PositionTable
 # from app.models import session
 # from app.models import Base, engine
@@ -58,7 +58,7 @@ def get_ter_attr(terminal_request):
     template = 'get_ter_attr|sys_fixed_msg_attr2|client_dev_id|sys_product|'
     if 'GET' in terminal_request:
         # return SplitInstance.result ...
-        pass
+        return redirect(url_for('0x0200'),)
     return render(terminal_request, template)
 
 if __name__ == '__main__':

@@ -23,8 +23,7 @@ class SplitBase:
     By doing @map, you can add more judge function
     we are already have `is_true` function here ...
     """
-    #: A list
-    main_split_rule = []
+
     #: A list for the regular express process!
     #: And this class attribute should always be override by the client!
     #: Example override it like the below!
@@ -58,6 +57,7 @@ class SplitBase:
 class SplitConvertBase(SplitBase, ConvertBase):
     #: Sometime, you just ignore the CRC checking,
     crc_check = False
+    CRC_AT = -2
 
     def __init__(self, val):
         self.convert_fun = None
@@ -77,13 +77,16 @@ class SplitConvertBase(SplitBase, ConvertBase):
 
             if self.crc_check:
                 self.message_head_content = val[1:-1]
-                self.crc = val[-2]
+
+                #: You should tell the hokey on the configure class
+                #: And where is the crc place, default CRC_AT --> -2
+                self.crc = val[self.CRC_AT]
                 if is_complete(self.message_head_content, self.crc):
                     self.build_dict(self.message_head_content)
                 else:
                     #: ignore this request from terminal device
                     self.debug = False
-                    print ('No complete data from client!')
+                    raise TypeError('No complete data from client!')
             else:
                 self.build_dict(val)
         else:
@@ -146,8 +149,8 @@ class SplitConvertBase(SplitBase, ConvertBase):
                 #: Usually,it's should be the pre-field name we got!!
                 #: Example, We have the data --> ['message_attr/2','device/length(message_attr) | to_bcd']
                 #: The dependent fun is `length` and the argument is `message_attr`
-                func_arg_field = self.prefix + spd['arg']
-
+                # func_arg_field = self.prefix + spd['arg']
+                func_arg_field = spd['arg']
                 #: If you get the argument name, and then you can check the result dict!
                 #: Where we have store our process result place!
                 #: Which field you need to checking of the result!
@@ -209,7 +212,10 @@ class SplitConvertBase(SplitBase, ConvertBase):
             #: At the end, you should check the flag ! and then decide whether convert the data!
             #: convert the field value to your need by call the convert function from convert_function
             if whether_convert:
-                field_value_custom_type = convert_fun(field_value)
+                if len(field_value) > 2:
+                    field_value_custom_type = convert_fun(field_value)
+                else:
+                    raise ValueError("Your data is not complete! can't convert it!")
             else:
                 field_value_custom_type = field_value
             self.result[fill_field] = field_value_custom_type

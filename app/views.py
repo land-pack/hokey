@@ -11,15 +11,15 @@ from hokey import render, redirect, url_for
 app = create_app()
 
 
-# @app.route('0x0100', '0x8100')
-# def register(terminal_request):
-#     """
-#     :param terminal_request: original data format to Dicts from terminal!
-#     :return: a render which a tuple factory
-#     you should know what you are doing and which field you need!
-#     """
-#     template = 'client_msg_id|client_msg_attr|client_dev_id|client_msg_product|client_content'
-#     return render(terminal_request, template)
+@app.route('0x0100')
+def register(terminal_request):
+    """
+    :param terminal_request: original data format to Dicts from terminal!
+    :return: a render which a tuple factory
+    you should know what you are doing and which field you need!
+    """
+    template = 'msg_id|msg_attr|dev_id|msg_product|content'
+    return render(terminal_request, template)
 
 
 @app.route('0x0102')

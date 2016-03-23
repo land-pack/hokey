@@ -16,6 +16,7 @@ class Config:
     DEVICE_ID = 'device_id'
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 't0p s3cr3t'
+    CRC_AT = -2
     HOST = '0.0.0.0'
     PORT = 5555
     ESCAPE_LIST = {'0x7e7b': '0x7e', '0x7b7b': '0x7b'}

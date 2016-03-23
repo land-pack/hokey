@@ -34,8 +34,7 @@ class Base:
 
         #: Global variable for Communicate to each function!
         self.response = ''
-        MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
-        MainSplit.CRC_AT = self.config.get('CRC_AT')
+
         self.set_socket_map = {}
         self.response = ''
 
@@ -71,7 +70,6 @@ class Base:
         """
 
         def _route(function_name):
-            # TODO
             new_rule = name_as_tuple(rule)  # TODO fiexed ...
             # To make '0x8100' to '(129, 1)'
             # self.view_functions[new_rule] = function_name
@@ -84,11 +82,17 @@ class Base:
 
         return _route
 
+    def load_config(self):
+        MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
+        print 'check the sub_split..', MainSplit.sub_split_rule
+        MainSplit.CRC_AT = self.config.get('CRC_AT')
+
     def get_data(self, data):
         """
         :param data: from grasshopper
         :return: to the grasshopper
         """
+        self.load_config()
         #: Call the pre_process!
         if self.debug:
             print 'Current data from terminal'

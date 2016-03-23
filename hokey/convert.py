@@ -72,6 +72,7 @@ class SplitConvertBase(SplitBase, ConvertBase):
 
         #: if the subclass no override it, raise a valueError exception!
         if not self.sub_split_rule:
+            print 'Sub_split_rule-->', self.sub_split_rule
             raise ValueError("The sub_split_rule can't empty!")
         if val:
 

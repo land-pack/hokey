@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append("..")
+
 from hokey import Hokey, render, redirect, url_for
 from .config import Config
 

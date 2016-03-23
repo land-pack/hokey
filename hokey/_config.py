@@ -9,6 +9,10 @@ class ConfigSample:
     ESCAPE_LIST = {}
 
 
+DEBUG = True
+SECRET_KEY = 'hard to guess string'
+
+
 class Config(dict):
     def from_object(self, obj):
         """Updates the values from the given object.  An object can be of one
@@ -27,13 +31,21 @@ class Config(dict):
         package because the package might be installed system wide.
         :param obj: an import name or object
         """
+
         for key in dir(obj):
             if key.isupper():
                 self[key] = getattr(obj, key)
 
 
 class SampleForTestConfigDict:
-    config = Config()  # A extends Dict!
+    config = Config()
+
+    def __init__(self):
+        pass
+
+    def do(self):
+
+        print self.config.get('HOST', 'default host')
 
 
 if __name__ == '__main__':
@@ -42,4 +54,5 @@ if __name__ == '__main__':
     p.config.from_object(ConfigSample)
     #: There also another config method
     p.config['ak'] = 'kkkk'
-    print p.config
+    # print p.config
+    p.do()

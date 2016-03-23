@@ -1,5 +1,6 @@
-from app import create_app
-from hokey import render, redirect, url_for
+from hokey import Hokey, render, redirect, url_for
+from .config import Config
+
 # from models import PositionTable
 # from app.models import session
 # from app.models import Base, engine
@@ -7,8 +8,17 @@ from hokey import render, redirect, url_for
 #
 # Base.metadata.create_all(engine)
 #
-# # from grasshopper import GrasshopperEngine as GE
-app = create_app()
+
+app = Hokey()
+app.config.from_object(Config)
+
+
+## from grasshopper import GrasshopperEngine as GE
+## engine = GE()
+
+
+## engine.install(app)
+
 
 
 @app.route('0x0100')
@@ -58,8 +68,10 @@ def get_ter_attr(terminal_request):
     template = 'get_ter_attr|sys_fixed_msg_attr2|client_dev_id|sys_product|'
     if 'GET' in terminal_request:
         # return SplitInstance.result ...
-        return redirect(url_for('0x0200'),)
+        return redirect(url_for('0x0200'), )
     return render(terminal_request, template)
 
+
 if __name__ == '__main__':
-    print app.view_functions
+    ##engine.run()
+    pass

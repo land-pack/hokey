@@ -90,7 +90,7 @@ class Base:
         :return: to the grasshopper
         """
         #: Call the pre_process!
-        if self.debug_mode:
+        if self.debug:
             print 'Current data from terminal'
             print data
             print '-' * 10

@@ -1,15 +1,6 @@
 import tongue
 from _tools import check
 
-counter = 0
-
-
-def new_counter():
-    global counter
-    counter += 1
-    return counter
-
-
 def render(request, ruler):
     """
 
@@ -20,7 +11,8 @@ def render(request, ruler):
     sys_id = SYS_ID
     temp = []
     each = ruler.split("|")
-    each.append('sys_crc')  # Auto loader the old CRC for value for occupying
+    # Auto loader the old CRC for value for occupying
+    each.append('sys_crc')
     for item in each:  # loader the data format by ruler
         if item in request:  # if the key in the request ,and go get it!
             if isinstance(request[item], tuple):  # because , the value will be a  tuple!

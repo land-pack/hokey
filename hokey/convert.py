@@ -213,10 +213,10 @@ class SplitConvertBase(SplitBase, ConvertBase):
             #: At the end, you should check the flag ! and then decide whether convert the data!
             #: convert the field value to your need by call the convert function from convert_function
             if whether_convert:
-                if len(field_value) > 2:
-                    field_value_custom_type = convert_fun(field_value)
-                else:
-                    raise ValueError("Your data is not complete! can't convert it!")
+                # if len(field_value) > 2:
+                field_value_custom_type = convert_fun(field_value)
+                # else:
+                #     raise ValueError("Your data is not complete! can't convert it!")
             else:
                 field_value_custom_type = field_value
             self.result[fill_field] = field_value_custom_type

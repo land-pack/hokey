@@ -53,3 +53,10 @@ def to_sec(val):
 def to_timestamp_fun(val):
     temp = to_datetime(val)
     return to_sec(temp)
+
+
+if __name__ == '__main__':
+    sample9 = (22, 1, 5, 17, 64, 25)
+    sample9x = to_timestamp_fun(sample9)
+    print 'old          :', sample9
+    print 'new          :', sample9x

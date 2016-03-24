@@ -21,9 +21,9 @@ class SampleSplitConvertBase(SplitConvertBase):
 
 class PositionSplit(SplitConvertBase):
     # Required override the parent attribute
-    sub_split_rule = ['alarm/4 | to_dword', 'status/4', 'latitude/4',
-                      'longitude/4', 'altitude/2', 'speed/2',
-                      'direction/2', 'timestamp/6']
+    sub_split_rule = ['alarm/4 | to_dword', 'status/4', 'latitude/4|to_dword',
+                      'longitude/4| to_dword', 'altitude/2', 'speed/2',
+                      'direction/2', 'timestamp/6 | to_time']
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ sys.path.append("..")
 from hokey import Hokey, render, redirect, url_for
 from config import Config
 from splits import PositionSplit
+
 # from models import PositionTable
 # from app.models import session
 # from app.models import Base, engine
@@ -57,6 +58,8 @@ def position(terminal_request):
     # p_i = PositionTable(**position_info)
     # session.add(p_i)
     # session.commit()
+    return "ok"
+
 
 @app.route('0x0104')
 def get_ter_info(terminal_request):

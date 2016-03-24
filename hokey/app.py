@@ -36,7 +36,6 @@ class Base:
         self.response = ''
 
         self.set_socket_map = {}
-        self.response = ''
         self.terminal_request_dict = {}
         self.client_request = ''
         self.client_response = ''
@@ -199,10 +198,11 @@ class Hokey(Base):
         else:
             self.response = "Can not process your data"
 
-        if '{' in self.response and '}' in self.response:
-            device = self.config.get('DEVICE_ID', 'device_id')
-            key = self.response[device]
-            if key in self.current_client_response:
-                self.current_client_response[key] = self.response
-                #: and then should return something to reset the terminal!!
-                #: for do that, you just return nothing !
+        if isinstance(self, str):
+            if '{' in self.response and '}' in self.response:
+                device = self.config.get('DEVICE_ID', 'device_id')
+                key = self.response[device]
+                if key in self.current_client_response:
+                    self.current_client_response[key] = self.response
+                    #: and then should return something to reset the terminal!!
+                    #: for do that, you just return nothing !

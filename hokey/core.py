@@ -1,5 +1,11 @@
 from convert import ConvertBase, SplitBase, SplitConvertBase
 from _tools import is_subpackage, is_encryption
+from utils import to_timestamp_fun
+
+
+@ConvertBase.register_convert_func('to_time')
+def to_time(val):
+    return to_timestamp_fun(val)
 
 
 # Default convert function define below

@@ -20,8 +20,6 @@ app.config.from_object(Config)
 
 ## from grasshopper import GrasshopperEngine as GE
 ## engine = GE()
-
-
 ## engine.install(app)
 
 
@@ -40,7 +38,7 @@ def register(terminal_request):
 @app.route('0x0102')
 def auth(terminal_request):
     msg_content = 'message_product|message_id|sys_ok'
-    template = 'ser_com_rsp|sys_fixed_msg_attr|device_id|sys_product|' + msg_content
+    template = '0x8001|sys_fixed_msg_attr|device_id|sys_product|' + msg_content
     return render(terminal_request, template)
 
 

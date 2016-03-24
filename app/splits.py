@@ -24,21 +24,10 @@ class PositionSplit(SplitConvertBase):
     crc_check = False
     sub_split_rule = ['alarm/4 | to_dword', 'status/4', 'latitude/4|to_dword',
                       'longitude/4| to_dword', 'altitude/2', 'speed/2',
-                      'direction/2', 'timestamp/6']
+                      'direction/2', 'timestamp/6| to_time']
 
 
 if __name__ == '__main__':
     sample = (126, 1, 0, 0, 2, 1, 80, 51, 80, 68, 118, 0, 1, 51, 52, 5, 126)
     instance = SampleSplitConvertBase(sample)
-    sample2 = (0, 0, 0, 0, 12, 0, 3, 2, 110, 227, 154, 6, 168, 96,
-               32, 4, 88, 0, 0, 1, 100, 22, 3, 36, 21, 71, 69, 1,
-               4, 0, 0, 9, 40, 3, 2, 0, 0, 37, 4, 0, 0, 0, 0, 42, 2,
-               0, 0, 48, 1, 26, 49, 1)
-
-    sample2 = (0, 0, 0, 0, 12, 0, 3, 2, 110, 227, 216, 6, 168,
-               96, 38, 5, 2, 0, 0, 0, 0, 22, 3, 36, 22, 17, 33,
-               1, 4, 0, 0, 9, 40, 3, 2, 0, 0, 37, 4, 0, 0, 0, 0,
-               42, 2, 0, 0, 48, 1, 27, 49, 1, 10)
-
-    instance2 = PositionSplit(sample2)
-    print instance2.result
+    print instance.result

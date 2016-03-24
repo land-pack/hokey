@@ -103,7 +103,7 @@ class Base:
         return self.response
 
     def pre_process(self, data):
-        if '{' in data:
+        if '{' in data and '}' in data:
 
             #: If the input data has '{' key, mean it's from client No terminal!
             client_request_dict = json.loads(data)
@@ -195,7 +195,7 @@ class Hokey(Base):
         else:
             self.response = "Can not process your data"
 
-        if '{' in self.response:
+        if '{' in self.response and '}' in self.response:
             device = self.config.get('DEVICE_ID', 'device_id')
             key = self.response[device]
             if key in self.current_client_response:

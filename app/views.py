@@ -3,8 +3,8 @@ import sys
 sys.path.append("..")
 
 from hokey import Hokey, render, redirect, url_for
-from .config import Config
-
+from config import Config
+from splits import PositionSplit
 # from models import PositionTable
 # from app.models import session
 # from app.models import Base, engine
@@ -44,20 +44,19 @@ def auth(terminal_request):
     return render(terminal_request, template)
 
 
-# @app.route('0x0200')
-# def position(terminal_request):
-#     # Load the field which your need to save!
-#     content = terminal_request['client_content']
-#     # Do some Resolution according your need!
-#     position_instance = PositionSplit(content)
-#     # Get the attribute of the PositionSplit and you'll got a Dict type
-#     position_info = position_instance.result
-#     print 'position_info', position_info
-#     # ORM
-#     p_i = PositionTable(**position_info)
-#     session.add(p_i)
-#     session.commit()
-#
+@app.route('0x0200')
+def position(terminal_request):
+    # Load the field which your need to save!
+    content = terminal_request['content']
+    # Do some Resolution according your need!
+    position_instance = PositionSplit(content)
+    # Get the attribute of the PositionSplit and you'll got a Dict type
+    position_info = position_instance.result
+    print 'position_info', position_info
+    # ORM
+    # p_i = PositionTable(**position_info)
+    # session.add(p_i)
+    # session.commit()
 
 @app.route('0x0104')
 def get_ter_info(terminal_request):
@@ -78,4 +77,4 @@ def get_ter_attr(terminal_request):
 
 if __name__ == '__main__':
     ##engine.run()
-    pass
+    print app.view_functions

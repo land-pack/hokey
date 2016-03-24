@@ -7,8 +7,8 @@ import os
 class Config:
     MAIN_SPLIT = ['head_tag/1', 'message_id/2', 'msg_attr/2',
                   'device_id/6', 'msg_product/2',
-                  'package_item/is_subpackage(msg_attr)?13~15:13~13',
-                  'content/is_subpackage(msg_attr)?15~-2:13~-2',
+                  'package_item/is_sub(msg_attr)?13~15:13~13',
+                  'content/is_sub(msg_attr)?15~-2:13~-2',
                   'crc/-2~-1'
                   ]
 

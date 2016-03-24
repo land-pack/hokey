@@ -37,7 +37,7 @@ class Base:
 
         self.set_socket_map = {}
         self.response = ''
-
+        self.terminal_request_dict = {}
         self.client_request = ''
         self.client_response = ''
         #: For map the device_id to the socket ...
@@ -127,12 +127,12 @@ class Base:
             request_context = MainSplit(tuple_data)
 
             #: After MainSplit process, we got a split instance!
-            terminal_request_dict = request_context.result
+            self.terminal_request_dict = request_context.result
 
             #: The below dict, is we got for now, we can easy to checking each field with the name!
             #: {'device': '15033504476', 'content': (51, 52), 'product': 1, 'message_id': (1, 0), 'message_attr': 2}
             #: Now, we have fill-full our terminal_request_dict!
-            self.dispatch_terminal_request(terminal_request_dict)
+            self.dispatch_terminal_request()
 
     def dispatch_client_request(self):
         """
@@ -141,7 +141,7 @@ class Base:
         """
         pass
 
-    def dispatch_terminal_request(self, val):
+    def dispatch_terminal_request(self):
         """
         This method will override on the sub-class `Hokey`
         :return:
@@ -155,13 +155,14 @@ class Hokey(Base):
     also work for checking receive data ...
     """
 
-    def dispatch_terminal_request(self, val):
+    def dispatch_terminal_request(self):
         """Does the request dispatching. Matches the URL and returns the
         value of the view or error handler. This does not have to be a
         response object. In order to convert the return value to a proper
         response object, call:func:`make_response`
         """
         #: The message_id_key from client config instance!
+        val = self.terminal_request_dict
         message_id = val[self.config.get('MESSAGE_ID', 'message_id')]
 
         #: The device_id_key also from client config
@@ -170,6 +171,8 @@ class Hokey(Base):
         #: update the dict for latest
         # self.latest_terminal_request[self.device_id] = self.terminal_request_dict
         #: self.device_id Example:'665','666'
+        message_id = str(message_id)
+        device_id = str(device_id)
 
         self.process_terminal_request(message_id, device_id)
 
@@ -190,8 +193,9 @@ class Hokey(Base):
             self.make_response_to_terminal(message_id)
 
     def make_response_to_terminal(self, message_id):
-        if message_id in self.views_functions:
-            self.response = self.views_functions[message_id](self.terminal_request_dict)
+
+        if message_id in self.view_functions:
+            self.response = self.view_functions[message_id](self.terminal_request_dict)
         else:
             self.response = "Can not process your data"
 

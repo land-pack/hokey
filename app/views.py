@@ -39,7 +39,7 @@ def register(terminal_request):
 @app.route('0x0102')
 def auth(terminal_request):
     msg_content = 'message_product|message_id|sys_ok'
-    template = '0x8001|sys_fixed_msg_attr|client_dev_id|sys_product|' + msg_content
+    template = 'ser_com_rsp|sys_fixed_msg_attr|device_id|sys_product|' + msg_content
     print 'terminal_request', terminal_request
     return render(terminal_request, template)
 

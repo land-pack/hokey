@@ -32,13 +32,13 @@ def register(terminal_request):
     :return: a render which a tuple factory
     you should know what you are doing and which field you need!
     """
-    template = 'msg_id|msg_attr|dev_id|msg_product|content'
+    template = 'message_id|message_attr|device_id|message_product|content'
     return render(terminal_request, template)
 
 
 @app.route('0x0102')
 def auth(terminal_request):
-    msg_content = 'client_msg_product|client_msg_id|sys_ok'
+    msg_content = 'message_product|message_id|sys_ok'
     template = '0x8001|sys_fixed_msg_attr|client_dev_id|sys_product|' + msg_content
     print 'terminal_request', terminal_request
     return render(terminal_request, template)

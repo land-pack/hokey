@@ -5,10 +5,10 @@ import os
 # in subclasses as necessary.
 
 class Config:
-    MAIN_SPLIT = ['message_id/2', 'msg_attr/2',
-                  'device_id/6', 'msg_product/2',
-                  'package_item/is_sub(msg_attr)?13~15:13~13',
-                  'content/is_sub(msg_attr)?15~-2:13~-2',
+    MAIN_SPLIT = ['message_id/2', 'message_attr/2',
+                  'device_id/6', 'message_product/2',
+                  'package_item/is_sub(message_attr)?13~15:13~13',
+                  'content/is_sub(message_attr)?15~-2:13~-2',
                   'crc/-2~-1'
                   ]
 

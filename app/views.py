@@ -41,7 +41,6 @@ def register(terminal_request):
 def auth(terminal_request):
     msg_content = 'message_product|message_id|sys_ok'
     template = 'ser_com_rsp|sys_fixed_msg_attr|device_id|sys_product|' + msg_content
-    print 'terminal_request', terminal_request
     return render(terminal_request, template)
 
 

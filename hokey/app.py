@@ -83,7 +83,6 @@ class Base:
 
     def load_config(self):
         MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
-        print 'check the sub_split..', MainSplit.sub_split_rule
         MainSplit.CRC_AT = self.config.get('CRC_AT')
 
     def get_data(self, data):
@@ -93,10 +92,7 @@ class Base:
         """
         self.load_config()
         #: Call the pre_process!
-        if self.debug:
-            print 'Current data from terminal'
-            print data
-            print '-' * 10
+
         self.pre_process(data)
         #: the response will be set after process!
         return self.response

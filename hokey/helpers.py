@@ -68,3 +68,8 @@ def pattern(*val):
     for item in val:
         temp[item[0]] = item[1]
     return temp
+
+if __name__ == '__main__':
+    sample_test_dns = '0x7e7b'
+    result_test_dns = dns(sample_test_dns)
+    print result_test_dns

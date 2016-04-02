@@ -9,7 +9,11 @@ class EscapeBase:
     escape_ruler = ''
 
     def __init__(self, data):
-        self.data = data
+        """
+        :param data: a tuple
+        :return: Nothing, but convert the tuple to a string!
+        """
+        self.data = str(data)
         self.reverse_ruler, self.forward_ruler = self.escape_dict(self.escape_ruler)
 
     def escape_dict(self, esc_str):
@@ -44,20 +48,21 @@ class EscapeBase:
         return dst
 
     def forward(self):
-        return self.escape(self.data, self.forward_ruler)
+        return eval(self.escape(self.data, self.forward_ruler))
 
     def reverse(self):
-        return self.escape(self.data, self.reverse_ruler)
+        return eval(self.escape(self.data, self.reverse_ruler))
 
 
-class Escape(EscapeBase):
+class EscapeSample(EscapeBase):
     """
-    You can override your escape_ruler on your subclass! 
+    You can override your escape_ruler on your subclass!
     """
     escape_ruler = '128,127==127#128,129==129'
 
 
 if __name__ == '__main__':
-    sample = "(128, 127, 127, 128, 129,122,1,128,126)"
-    instance = Escape(sample)
+    sample = (128, 127, 127, 128, 129, 122, 1, 128, 126)
+    instance = EscapeSample(sample)
     print instance.forward()
+    print instance.reverse()

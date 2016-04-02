@@ -2,7 +2,7 @@ import sys
 
 sys.path.append("..")
 
-from hokey import Hokey, render, redirect, url_for
+from hokey import Hokey, render, redirect, url_for, auto_render
 from config import Config
 from splits import PositionSplit
 
@@ -39,6 +39,7 @@ def register(terminal_request):
 def auth(terminal_request):
     msg_content = 'message_product|message_id|sys_ok'
     template = '0x8001|sys_fixed_msg_attr|device_id|sys_product|' + msg_content
+    # template = '0x8001|auto_message_attr|device_id|auto_product|'
     return render(terminal_request, template)
 
 
@@ -73,6 +74,16 @@ def get_ter_attr(terminal_request):
         # return SplitInstance.result ...
         return redirect(url_for('0x0200'), )
     return render(terminal_request, template)
+
+
+@app.route('0x8001')
+def server_common_response(client_request):
+    pass
+
+
+@app.route('0x8104')
+def get_terminal_infor(terminal_request):
+    return auto_render(terminal_request)
 
 
 if __name__ == '__main__':

@@ -68,6 +68,14 @@ def render(request, ruler):
     return send_data_binary
 
 
+def render_ask():
+    pass
+
+
+def auto_render(val):
+    pass
+
+
 if __name__ == '__main__':
     sample = {'t_product': (1, 2), 'msg_id': (3, 5), 'sys_ok': (2,)}
     template = '0x8001|msg_id|sys_ok'

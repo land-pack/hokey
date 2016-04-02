@@ -1,4 +1,4 @@
-from template import render
+from template import render, auto_render
 from .app import Hokey
 from .convert import SplitBase, ConvertBase, SplitConvertBase
 from .utils import redirect

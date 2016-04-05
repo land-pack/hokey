@@ -65,6 +65,16 @@ def to_a_word_fun(val):
     return temp
 
 
+@ConvertBase.register_convert_func('to_string')
+def to_string_fun(val):
+    pass
+
+
+@ConvertBase.register_convert_func('to_byte')
+def to_byte_fun(val):
+    pass
+
+
 # --------------------------------------------------
 @SplitBase.register_rely_func('is_sub')
 def is_subpackage_fun(val):

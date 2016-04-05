@@ -121,6 +121,9 @@ class Base:
             #: we will (126, 1, 2, 0, 2, 1, 80, 51, 80, 68, 118, 0, 3, 51, 52, 5, 126)
             request_context = MainSplit(tuple_data)
 
+            #: We will escape something here!
+            # TODO import your EscapeBase
+
             #: After MainSplit process, we got a split instance!
             self.terminal_request_dict = request_context.result
 

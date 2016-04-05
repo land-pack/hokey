@@ -10,7 +10,7 @@ class EscapeBase:
     of EscapeBase! and the syntax like '128,127==127#128,129==129#...'
     """
     escape_ruler = ''
-    singleton_flag = False
+    singleton_flag = True
 
     def __init__(self, data):
         """
@@ -47,6 +47,7 @@ class EscapeBase:
                 new_value_x = new_value.replace('(', '').replace(')', '').rstrip(',')
                 new_escape_str += new_key_x + '==' + new_value_x + '#'
             self.escape_ruler = new_escape_str.rstrip('#')
+            self.singleton_flag = False
         else:
             return 'You see this!! because this function is use Singleton Pattern! Only call for one time!'
 
@@ -80,9 +81,11 @@ class EscapeBase:
                 dst = dst.replace(k, escape_table[k])
         return dst
 
+    @property
     def forward(self):
         return eval(self.escape(self.data, self.forward_ruler))
 
+    @property
     def reverse(self):
         return eval(self.escape(self.data, self.reverse_ruler))
 
@@ -91,13 +94,12 @@ class EscapeSample(EscapeBase):
     """
     You can override your escape_ruler on your subclass!
     """
-    escape_ruler = '128,127==127#128,129==129'
-    # escape_ruler = '0x7e7b==0x7e#0x7b7b==0x7b'
+    # escape_ruler = '128,127==127#128,129==129'
+    escape_ruler = '0x7e7b==0x7e#0x7b7b==0x7b'
 
 
 if __name__ == '__main__':
-    sample = (128, 127, 126, 123, 129, 126, 123, 128, 126)
+    sample = (128, 127, 126, 126, 129, 126, 123, 128, 126)
     instance = EscapeSample(sample)
-    print instance.forward()
-    print instance.reverse()
-    print instance.clean_escape_ruler()
+    print instance.forward
+    print instance.reverse

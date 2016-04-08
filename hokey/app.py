@@ -1,8 +1,14 @@
+from abc import ABCMeta, abstractmethod, abstractproperty
+import json
 import tongue
 from convert import SplitConvertBase
 from _tools import name_as_tuple
-import json
 from ._config import Config
+from escape import EscapeBase
+
+
+class MainEscape(EscapeBase):
+    escape_ruler = ''
 
 
 class MainSplit(SplitConvertBase):
@@ -11,39 +17,36 @@ class MainSplit(SplitConvertBase):
     sub_split_rule = []
 
 
-class Base:
-    #: A dictionary of all view functions registered.  The keys will
-    #: be function names which are also used to generate MESSAGE_IDs and
-    #: the values are the function objects themselves.
-    #: To register a view function, use the :meth:`route` decorator.
-    view_functions = {}
+class ApiBase:
+    __metaclass__ = ABCMeta
 
-    #: Example below!
-    #: {    "12345":{"device_id":"12345","cmd":"0x8104"}
-    #:      "67890":{"device_id":"67890","cmd":"0x8107"}
-    #:      "sample":{"device_id":"sample","cmd":"0x8109"} }
-    current_client_requests = {}
+    @abstractproperty
+    def view_functions(self):
+        """
+        A dictionary of all view functions registered. The keys will
+        be functions names which are also used to generate MESSAGE_ID
+        and the values are the function objects themselves.
+        To register a view function, use the :method:`route` decorator.
+        :return:
+        """
 
-    #: {"12345":{"server":
-    current_client_response = {}
+    @abstractproperty
+    def current_client_requests(self):
+        """
+        A dictionary of all client requests, The keys will be device id
+        and the value should be the MESSAGE_ID.Maybe have some arguments.
+        :return:
+        """
 
-    #: A extends Dict! have a `from_object` method ,can load the configure easily!
-    config = Config()
+    @abstractproperty
+    def current_client_responses(self):
+        """
+        A dictionary of all client responses, The keys will be device id
+         and the value should be a json which the user interesting!
+        :return:
+        """
 
-    def __init__(self, debug=True, is_binary=False):
-
-        #: Global variable for Communicate to each function!
-        self.response = ''
-
-        self.set_socket_map = {}
-        self.terminal_request_dict = {}
-        self.client_request = ''
-        self.client_response = ''
-        #: For map the device_id to the socket ...
-        self.device_id = ''
-        self.is_binary_data = is_binary
-        self.debug = debug
-
+    @abstractmethod
     def route(self, rule):
         """
         A decorator that is used to register a view function for a given
@@ -68,8 +71,67 @@ class Base:
         :param	rule: the URL rule as string
         """
 
+    @abstractmethod
+    def get_data(self, data):
+        """
+        To get the data from data receiver engine!
+        Like Grasshopper engine!
+        :param data:
+        :return:
+        """
+
+
+class Base(ApiBase):
+    view_functions = {}
+
+    current_client_requests = {}
+
+    current_client_responses = {}
+
+    #: A extends Dict! have a `from_object` method ,can load the configure easily!
+    config = Config()
+
+    def __init__(self, debug=True, is_binary=False):
+        #: Global variable for Communicate to each function!
+        self.response = ''
+        self.set_socket_map = {}
+        self.terminal_request_dict = {}
+        self.client_request = ''
+        self.client_response = ''
+
+        #: For map the device_id to the socket ...
+        self.device_id = ''
+        self.is_binary_data = is_binary
+        self.debug = debug
+
+    def load_config(self):
+        """
+        According the config dict, will configure some part here!
+        :return:
+        """
+        MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
+        MainSplit.CRC_AT = self.config.get('CRC_AT')
+        MainEscape.escape_ruler = self.config.get('ESCAPE')
+
+    def dispatch_data(self, data):
+        pass
+
+    def get_data(self, data):
+        """
+        :param data: from grasshopper
+        :return: to the grasshopper
+        """
+        self.load_config()
+        #: Call the pre_process!
+
+        self.dispatch_data(data)
+        #: the response will be set after process!
+
+        return self.response
+
+    def route(self, rule):
         def _route(function_name):
-            new_rule = name_as_tuple(rule)  # TODO fiexed ...
+            new_rule = name_as_tuple(rule)
             # To make '0x8100' to '(129, 1)'
             # self.view_functions[new_rule] = function_name
             self.view_functions[new_rule] = function_name
@@ -81,25 +143,30 @@ class Base:
 
         return _route
 
-    def load_config(self):
-        MainSplit.sub_split_rule = self.config.get('MAIN_SPLIT')
-        MainSplit.CRC_AT = self.config.get('CRC_AT')
 
-    def get_data(self, data):
-        """
-        :param data: from grasshopper
-        :return: to the grasshopper
-        """
-        self.load_config()
-        #: Call the pre_process!
+class Hokey(Base):
+    """
+    This class work for map the message id to the view functions
+    also work for checking receive data ...
+    """
 
-        self.pre_process(data)
-        #: the response will be set after process!
-        return self.response
+    @staticmethod
+    def is_from_client(data):
+        if data.startswith('{') and data.endswith('}'):
+            return True
+        else:
+            return False
 
-    def pre_process(self, data):
-        if '{' in data and '}' in data:
+    @staticmethod
+    def is_from_terminal(data):
+        try:
+            tongue.Decode(data)
+            return True
+        except Exception, e:
+            return False
 
+    def dispatch_data(self, data):
+        if self.is_from_client(data):
             #: If the input data has '{' key, mean it's from client No terminal!
             client_request_dict = json.loads(data)
 
@@ -110,10 +177,9 @@ class Base:
             temp = self.current_client_requests
             self.response = str(temp)
             #: Empty all!
-            self.current_client_response = {}
+            self.current_client_responses = {}
 
-        else:
-
+        elif self.is_from_terminal(data):
             #: else, we may got the binary data from terminal!
             #: so, we need to convert it to the human understand type!
             tuple_data = tongue.Decode(data).dst
@@ -131,27 +197,8 @@ class Base:
             #: {'device': '15033504476', 'content': (51, 52), 'product': 1, 'message_id': (1, 0), 'message_attr': 2}
             #: Now, we have fill-full our terminal_request_dict!
             self.dispatch_terminal_request()
-
-    def dispatch_client_request(self):
-        """
-        This method will override on the sub-class! `Hokey`
-        :return:
-        """
-        pass
-
-    def dispatch_terminal_request(self):
-        """
-        This method will override on the sub-class `Hokey`
-        :return:
-        """
-        pass
-
-
-class Hokey(Base):
-    """
-    This class work for map the message id to the view functions
-    also work for checking receive data ...
-    """
+        else:
+            print('You data ....wrong ')
 
     def dispatch_terminal_request(self):
         """Does the request dispatching. Matches the URL and returns the
@@ -186,7 +233,7 @@ class Hokey(Base):
             del self.current_client_requests[device_id]
 
             #: Init the a Dict with a terminal device id as it's key!
-            self.current_client_response[device_id] = ''
+            self.current_client_responses[device_id] = ''
         else:
             self.make_response_to_terminal(message_id)
 
@@ -201,7 +248,7 @@ class Hokey(Base):
             if '{' in self.response and '}' in self.response:
                 device = self.config.get('DEVICE_ID', 'device_id')
                 key = self.response[device]
-                if key in self.current_client_response:
-                    self.current_client_response[key] = self.response
+                if key in self.current_client_responses:
+                    self.current_client_responses[key] = self.response
                     #: and then should return something to reset the terminal!!
                     #: for do that, you just return nothing !

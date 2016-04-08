@@ -20,7 +20,7 @@ class Config:
     CRC_AT = -2
     HOST = '0.0.0.0'
     PORT = 5555
-    ESCAPE_LIST = '0x7e7b==0x7e#0x7b7b==0x7b'
+    ESCAPE = '0x7e7b==0x7e#0x7b7b==0x7b'
 
     """
     The NUM_CODE is length of authentication

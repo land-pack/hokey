@@ -162,7 +162,7 @@ class Hokey(Base):
         try:
             tongue.Decode(data)
             return True
-        except Exception, e:
+        except TypeError:
             return False
 
     def dispatch_data(self, data):
